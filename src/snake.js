@@ -11,16 +11,17 @@ import {
 	SCORE_INCREASE,
 } from './constants';
 
-function Snake(ctx, width, height, gridWidth, gridHeight) {
+function Snake(ctx, width, height, gridWidth) {
 	this.c = ctx;
 	this.width = width;
 	this.height = height;
 
 	this.grid = {
 		w:gridWidth,
-		h:gridHeight,
+		h:Math.round(gridWidth / width * height),
 	};
 	this.state = IDLE;
+	this.radius = Math.round(width / gridWidth) / 2;
 
 	this.apple = {
 		x:null,
@@ -162,7 +163,6 @@ Snake.prototype.update = function(dt) {
 
 Snake.prototype.render = function() {
 	var i;
-	var radius = 10;
 
 	if (this.state === IDLE) {
 		return;
@@ -175,7 +175,7 @@ Snake.prototype.render = function() {
 		this.c.arc(
 			this.snake[i].x / this.grid.w * this.width,
 			this.snake[i].y / this.grid.h * this.height,
-			radius,
+			this.radius,
 			0,
 			Math.PI * 2);
 		this.c.closePath();
@@ -187,7 +187,7 @@ Snake.prototype.render = function() {
 	this.c.arc(
 		this.apple.x / this.grid.w * this.width,
 		this.apple.y / this.grid.h * this.height,
-		radius,
+		this.radius,
 		0,
 		Math.PI * 2);
 	this.c.closePath();

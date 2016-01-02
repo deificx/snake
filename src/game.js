@@ -15,9 +15,8 @@ import Snake from './snake';
 
 var animationFrame = new AnimationFrame();
 var gridWidth = 30;
-var gridHeight = 30;
 var context = canvas.getContext('2d');
-var s = new Snake(context, canvas.width, canvas.height, gridWidth, gridHeight);
+var s = new Snake(context, canvas.width, canvas.height, gridWidth);
 var time;
 var highScore = 0;
 var textMarginLeft = 20;
