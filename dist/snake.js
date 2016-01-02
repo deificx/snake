@@ -68,9 +68,8 @@
 
 	var animationFrame = new _animationFrame2.default();
 	var gridWidth = 30;
-	var gridHeight = 30;
 	var context = _html2.default.getContext('2d');
-	var s = new _snake2.default(context, _html2.default.width, _html2.default.height, gridWidth, gridHeight);
+	var s = new _snake2.default(context, _html2.default.width, _html2.default.height, gridWidth);
 	var time;
 	var highScore = 0;
 	var textMarginLeft = 20;
@@ -438,16 +437,17 @@
 
 	var _constants = __webpack_require__(1);
 
-	function Snake(ctx, width, height, gridWidth, gridHeight) {
+	function Snake(ctx, width, height, gridWidth) {
 		this.c = ctx;
 		this.width = width;
 		this.height = height;
 
 		this.grid = {
 			w: gridWidth,
-			h: gridHeight
+			h: Math.round(gridWidth / width * height)
 		};
 		this.state = _constants.IDLE;
+		this.radius = Math.round(width / gridWidth) / 2;
 
 		this.apple = {
 			x: null,
@@ -589,7 +589,6 @@
 
 	Snake.prototype.render = function () {
 		var i;
-		var radius = 10;
 
 		if (this.state === _constants.IDLE) {
 			return;
@@ -599,14 +598,14 @@
 
 		for (i = 0; i < this.snake.length; i++) {
 			this.c.beginPath();
-			this.c.arc(this.snake[i].x / this.grid.w * this.width, this.snake[i].y / this.grid.h * this.height, radius, 0, Math.PI * 2);
+			this.c.arc(this.snake[i].x / this.grid.w * this.width, this.snake[i].y / this.grid.h * this.height, this.radius, 0, Math.PI * 2);
 			this.c.closePath();
 			this.c.fill();
 		}
 
 		this.c.fillStyle = '#f00';
 		this.c.beginPath();
-		this.c.arc(this.apple.x / this.grid.w * this.width, this.apple.y / this.grid.h * this.height, radius, 0, Math.PI * 2);
+		this.c.arc(this.apple.x / this.grid.w * this.width, this.apple.y / this.grid.h * this.height, this.radius, 0, Math.PI * 2);
 		this.c.closePath();
 		this.c.fill();
 	};
