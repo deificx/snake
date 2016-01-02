@@ -36,6 +36,7 @@ function Snake(ctx, width, height, gridWidth) {
 
 	this.snake = [];
 	this.wait = 300;
+	this.cooldown = 300;
 }
 
 Snake.prototype.newGame = function() {
@@ -124,7 +125,7 @@ Snake.prototype.update = function(dt) {
 		return;
 	}
 
-	this.wait = 300;
+	this.wait = this.cooldown;
 
 	switch (this.direction) {
 	case UP:
@@ -152,6 +153,9 @@ Snake.prototype.update = function(dt) {
 		this.snake.unshift(move);
 		this.position = move;
 		this.score = this.score + SCORE_INCREASE;
+		if (this.score < 200) {
+			this.cooldown = 300 - this.score;
+		}
 	} else if (this.collision(move)) {
 		this.state = ENDED;
 	} else {
@@ -163,6 +167,9 @@ Snake.prototype.update = function(dt) {
 
 Snake.prototype.render = function() {
 	var i;
+	var d;
+	var offsetX;
+	var offsetY;
 
 	if (this.state === IDLE) {
 		return;
@@ -171,10 +178,38 @@ Snake.prototype.render = function() {
 	this.c.fillStyle = '#333';
 
 	for (i = 0; i < this.snake.length; i++) {
+		offsetX = 0;
+		offsetY = 0;
+		if (this.state === IDLE) {
+			if (i === 0) {
+				d = this.direction;
+			} else if (this.snake[i-1].y < this.snake[i].y) {
+				d = UP;
+			} else if (this.snake[i-1].x > this.snake[i].x) {
+				d = RIGHT;
+			} else if (this.snake[i-1].y > this.snake[i].y) {
+				d = DOWN;
+			} else {
+				d = LEFT;
+			}
+			switch (d) {
+			case UP:
+				offsetY = 1 / this.grid.h * this.height * this.wait / this.cooldown;
+				break;
+			case RIGHT:
+				offsetX = 1 / this.grid.w * this.width * this.wait / this.cooldown * -1;
+				break;
+			case DOWN:
+				offsetY = 1 / this.grid.h * this.height * this.wait / this.cooldown * -1;
+				break;
+			default:
+				offsetX = 1 / this.grid.w * this.width * this.wait / this.cooldown;
+			}
+		}
 		this.c.beginPath();
 		this.c.arc(
-			this.snake[i].x / this.grid.w * this.width,
-			this.snake[i].y / this.grid.h * this.height,
+			this.snake[i].x / this.grid.w * this.width + offsetX,
+			this.snake[i].y / this.grid.h * this.height + offsetY,
 			this.radius,
 			0,
 			Math.PI * 2);
