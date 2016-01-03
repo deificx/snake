@@ -1,10 +1,6 @@
 "use strict";
 
 import {
-	UP,
-	RIGHT,
-	DOWN,
-	LEFT,
 	IDLE,
 	ENDED,
 } from './constants';
@@ -27,7 +23,6 @@ var render = () => {
 	var dt = now - (time || now);
 	time = now;
 
-	animationFrame.request(render);
 	context.fillStyle = '#eee';
 	context.fillRect(0,0,canvas.width,canvas.height);
 
@@ -60,31 +55,15 @@ var render = () => {
 		break;
 	default:
 		context.fillText(s.getScore(), textMarginLeft, textHeight, textWidth);
+		animationFrame.request(render);
+		break;
 	}
 };
 
-animationFrame.request(render);
+import controls from './controls';
 
-import keypress from '../lib/keypress';
-
-const listener = new keypress.Listener();
-
-listener.simple_combo('up', () => {
-	s.setDir(UP);
-});
-
-listener.simple_combo('right', () => {
-	s.setDir(RIGHT);
-});
-
-listener.simple_combo('down', () => {
-	s.setDir(DOWN);
-});
-
-listener.simple_combo('left', () => {
-	s.setDir(LEFT);
-});
-
-listener.simple_combo('enter', () => {
+controls.on('move', (dir) => { s.setDir(dir); });
+controls.on('new_game', () => {
 	s.newGame();
+	animationFrame.request(render);
 });

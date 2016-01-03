@@ -21,6 +21,7 @@ module.exports = {
 				include: path.join(__dirname, 'src'),
 				loader: 'babel',
 				query: {
+					plugins: ['transform-runtime'],
 					presets: ['es2015']
 				}
 			}
