@@ -1,4 +1,5 @@
 var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
 	entry: path.join(__dirname, 'src', 'game.js'),
@@ -26,5 +27,13 @@ module.exports = {
 				}
 			}
 		]
-	}
+	},
+	plugins: [
+		new webpack.optimize.OccurenceOrderPlugin(true),
+		new webpack.optimize.UglifyJsPlugin({
+			output: {
+				comments: false
+			}
+		}),
+	]
 }
