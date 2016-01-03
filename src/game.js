@@ -60,6 +60,8 @@ var render = () => {
 	}
 };
 
+animationFrame.request(render);
+
 import controls from './controls';
 
 controls.on('move', (dir) => { s.setDir(dir); });
