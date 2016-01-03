@@ -8,7 +8,9 @@ import {
 	IDLE,
 	STARTED,
 	ENDED,
+	SCORE_CAP,
 	SCORE_INCREASE,
+	COOLDOWN,
 } from './constants';
 
 function Snake(ctx, width, height, gridWidth) {
@@ -24,8 +26,8 @@ function Snake(ctx, width, height, gridWidth) {
 	this.radius = Math.round(width / gridWidth) / 2;
 
 	this.apple = {
-		x:null,
-		y:null,
+		x: null,
+		y: null,
 	};
 	this.position = {
 		x:null,
@@ -44,15 +46,15 @@ Snake.prototype.newGame = function() {
 
 	this.snake = [];
 	this.snake.push({
-		x:this.grid.w/2,
-		y:this.grid.h/2,
+		x:Math.round(this.grid.w/2),
+		y:Math.round(this.grid.h/2),
 	});
 	this.snake.push({
-		x:this.snake[0].x+1,
+		x:this.snake[0].x + 1,
 		y:this.snake[0].y,
 	});
 	this.snake.push({
-		x:this.snake[0].x+2,
+		x:this.snake[0].x + 2,
 		y:this.snake[0].y,
 	});
 
@@ -153,8 +155,8 @@ Snake.prototype.update = function(dt) {
 		this.snake.unshift(move);
 		this.position = move;
 		this.score = this.score + SCORE_INCREASE;
-		if (this.score < 200) {
-			this.cooldown = 300 - this.score;
+		if (this.score < SCORE_CAP) {
+			this.cooldown = COOLDOWN - this.score;
 		}
 	} else if (this.collision(move)) {
 		this.state = ENDED;
@@ -170,6 +172,7 @@ Snake.prototype.render = function() {
 	var d;
 	var offsetX;
 	var offsetY;
+	var flip = -1;
 
 	if (this.state === IDLE) {
 		return;
@@ -197,10 +200,10 @@ Snake.prototype.render = function() {
 				offsetY = 1 / this.grid.h * this.height * this.wait / this.cooldown;
 				break;
 			case RIGHT:
-				offsetX = 1 / this.grid.w * this.width * this.wait / this.cooldown * -1;
+				offsetX = 1 / this.grid.w * this.width * this.wait / this.cooldown * flip;
 				break;
 			case DOWN:
-				offsetY = 1 / this.grid.h * this.height * this.wait / this.cooldown * -1;
+				offsetY = 1 / this.grid.h * this.height * this.wait / this.cooldown * flip;
 				break;
 			default:
 				offsetX = 1 / this.grid.w * this.width * this.wait / this.cooldown;
