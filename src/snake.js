@@ -169,10 +169,6 @@ Snake.prototype.update = function(dt) {
 
 Snake.prototype.render = function() {
 	var i;
-	var d;
-	var offsetX;
-	var offsetY;
-	var flip = -1;
 
 	if (this.state === IDLE) {
 		return;
@@ -180,39 +176,12 @@ Snake.prototype.render = function() {
 
 	this.c.fillStyle = '#333';
 
+	// vertical offset === 1 / this.grid.h * this.height * this.wait / this.cooldown;
 	for (i = 0; i < this.snake.length; i++) {
-		offsetX = 0;
-		offsetY = 0;
-		if (this.state === IDLE) {
-			if (i === 0) {
-				d = this.direction;
-			} else if (this.snake[i-1].y < this.snake[i].y) {
-				d = UP;
-			} else if (this.snake[i-1].x > this.snake[i].x) {
-				d = RIGHT;
-			} else if (this.snake[i-1].y > this.snake[i].y) {
-				d = DOWN;
-			} else {
-				d = LEFT;
-			}
-			switch (d) {
-			case UP:
-				offsetY = 1 / this.grid.h * this.height * this.wait / this.cooldown;
-				break;
-			case RIGHT:
-				offsetX = 1 / this.grid.w * this.width * this.wait / this.cooldown * flip;
-				break;
-			case DOWN:
-				offsetY = 1 / this.grid.h * this.height * this.wait / this.cooldown * flip;
-				break;
-			default:
-				offsetX = 1 / this.grid.w * this.width * this.wait / this.cooldown;
-			}
-		}
 		this.c.beginPath();
 		this.c.arc(
-			this.snake[i].x / this.grid.w * this.width + offsetX,
-			this.snake[i].y / this.grid.h * this.height + offsetY,
+			this.snake[i].x / this.grid.w * this.width,
+			this.snake[i].y / this.grid.h * this.height,
 			this.radius,
 			0,
 			Math.PI * 2);
