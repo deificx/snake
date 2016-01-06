@@ -38,13 +38,11 @@ export default class Snake {
 		this.score = 0;
 
 		this.snake = [];
-		this.wait = 300;
-		this.cooldown = 300;
+		this.wait = COOLDOWN;
+		this.cooldown = COOLDOWN;
 	}
 
 	newGame() {
-		var apple = this.randomPos();
-
 		this.snake = [];
 		this.snake.push({
 			x:Math.round(this.grid.w/2),
@@ -62,10 +60,7 @@ export default class Snake {
 		this.position = this.snake[0];
 		this.randomDir();
 
-		while (this.collision(apple)) {
-			apple = this.randomPos();
-		}
-		this.apple = apple;
+		this.placeApple();
 
 		this.score = 0;
 		this.state = STARTED;
@@ -101,13 +96,6 @@ export default class Snake {
 		}
 	}
 
-	randomPos() {
-		return {
-			x: Math.floor(Math.random()*this.grid.w),
-			y: Math.floor(Math.random()*this.grid.h),
-		};
-	}
-
 	collision(pos) {
 		var i;
 		for (i = 0; i < this.snake.length; i++) {
@@ -118,13 +106,37 @@ export default class Snake {
 		return false;
 	}
 
+	randomPos() {
+		return {
+			x: Math.floor(Math.random()*this.grid.w),
+			y: Math.floor(Math.random()*this.grid.h),
+		};
+	}
+
+	placeApple() {
+		var apple = this.randomPos();
+		while (this.collision(apple)) {
+			apple = this.randomPos();
+		}
+		this.apple = apple;
+	}
+
+	move(move, same) {
+		this.position = move;
+		if (same) {
+			this.snake.pop();
+		}
+		this.snake.unshift(move);
+		this.snake[0].from = this.directionDiff(this.snake[0], this.snake[1]);
+		this.snake[1].to = this.directionDiff(this.snake[1], this.snake[0]);
+	}
+
 	update(dt) {
 		var move = Object.assign({}, this.position);
-		var apple;
 
 		this.wait = this.wait - dt;
 
-		if (this.wait > 0 || this.state !== STARTED) {
+		if (this.wait > 0) {
 			return;
 		}
 
@@ -160,47 +172,51 @@ export default class Snake {
 		}
 
 		if (move.x === this.apple.x && move.y === this.apple.y) {
-			apple = this.randomPos();
-			while (this.collision(apple)) {
-				apple = this.randomPos();
-			}
-			this.apple = apple;
-			this.snake.unshift(move);
-			this.position = move;
 			this.score = this.score + SCORE_INCREASE;
 			if (this.score < SCORE_CAP) {
 				this.cooldown = COOLDOWN - this.score;
 			}
+			this.placeApple();
+			this.move(move, false);
 		} else if (this.collision(move)) {
 			this.state = ENDED;
 		} else {
-			this.snake.pop();
-			this.snake.unshift(move);
-			this.position = move;
+			this.move(move, true);
 		}
+	}
+
+	directionDiff(a, b) {
+		if (a.x < b.x) {
+			return LEFT;
+		} else if (a.x > b.x) {
+			return RIGHT;
+		} else if (a.y < b.y) {
+			return UP;
+		}
+		return DOWN;
 	}
 
 	render() {
 		var i;
+		var percentage = this.wait / this.cooldown * 2;
+		var entering = this.wait > this.cooldown / 2;
+		var offsetX;
+		var offsetY;
 
 		if (this.state === IDLE) {
 			return;
 		}
 
-		this.c.fillStyle = '#333';
-
-		// vertical offset === 1 / this.grid.h * this.height * this.wait / this.cooldown;
-		for (i = 0; i < this.snake.length; i++) {
-			this.c.beginPath();
-			this.c.arc(
-				this.radius + this.snake[i].x / this.grid.w * this.width,
-				this.radius + this.snake[i].y / this.grid.h * this.height,
-				this.radius,
-				0,
-				Math.PI * 2);
-			this.c.closePath();
-			this.c.fill();
+		this.c.strokeStyle = '#ccc';
+		for (i = 1; i < this.grid.w; i++) {
+			this.c.moveTo(this.radius * 2 * i, 0);
+			this.c.lineTo(this.radius * 2 * i, this.height);
 		}
+		for (i = 1; i < this.grid.h; i++) {
+			this.c.moveTo(0, this.radius * 2 * i);
+			this.c.lineTo(this.width, this.radius * 2 * i);
+		}
+		this.c.stroke();
 
 		this.c.fillStyle = '#f00';
 		this.c.beginPath();
@@ -212,5 +228,53 @@ export default class Snake {
 			Math.PI * 2);
 		this.c.closePath();
 		this.c.fill();
+
+		this.c.fillStyle = '#333';
+
+		for (i = 0; i < this.snake.length; i++) {
+			offsetX = 0;
+			offsetY = 0;
+			if (entering) {
+				switch (this.snake[i].from) {
+				case UP:
+					offsetY = this.radius * percentage;
+					break;
+				case DOWN:
+					offsetY = this.radius * percentage * -1;
+					break;
+				case LEFT:
+					offsetX = this.radius * percentage;
+					break;
+				case RIGHT:
+					offsetX = this.radius * percentage * -1;
+					break;
+				}
+			} else {
+				switch (this.snake[i].from) {
+				case UP:
+					offsetY = this.radius * percentage;
+					break;
+				case DOWN:
+					offsetY = this.radius * percentage * -1;
+					break;
+				case LEFT:
+					offsetX = this.radius * percentage;
+					break;
+				case RIGHT:
+					offsetX = this.radius * percentage * -1;
+					break;
+				}
+			}
+
+			this.c.beginPath();
+			this.c.arc(
+				this.radius + this.snake[i].x / this.grid.w * this.width + offsetX,
+				this.radius + this.snake[i].y / this.grid.h * this.height + offsetY,
+				this.radius,
+				0,
+				Math.PI * 2);
+			this.c.closePath();
+			this.c.fill();
+		}
 	}
 }
