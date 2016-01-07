@@ -48,14 +48,8 @@ export default class Snake {
 			x:Math.round(this.grid.w/2),
 			y:Math.round(this.grid.h/2),
 		});
-		this.snake.push({
-			x:this.snake[0].x + 1,
-			y:this.snake[0].y,
-		});
-		this.snake.push({
-			x:this.snake[0].x + 2,
-			y:this.snake[0].y,
-		});
+		this.snake.push(this.snake[0]);
+		this.snake.push(this.snake[0]);
 
 		this.position = this.snake[0];
 		this.randomDir();
@@ -64,6 +58,8 @@ export default class Snake {
 
 		this.score = 0;
 		this.state = STARTED;
+		this.wait = COOLDOWN;
+		this.cooldown = COOLDOWN;
 	}
 
 	setDir(dir) {
@@ -127,9 +123,9 @@ export default class Snake {
 			this.snake.pop();
 		}
 		this.snake.unshift(move);
-		this.snake[0].from = this.directionDiff(this.snake[0], this.snake[1]);
-		this.snake[1].to = this.directionDiff(this.snake[1], this.snake[0]);
-		console.log(this.snake[0].x, this.snake[0].y);
+		this.snake[0].from = this.directionDiff(this.snake[1], this.snake[0]);
+		this.snake[1].from = this.directionDiff(this.snake[2], this.snake[1]);
+		this.snake[1].to = this.directionDiff(this.snake[0], this.snake[1]);
 	}
 
 	update(dt) {
@@ -180,6 +176,7 @@ export default class Snake {
 			this.placeApple();
 			this.move(move, false);
 		} else if (this.collision(move)) {
+			this.wait = 0;
 			this.state = ENDED;
 		} else {
 			this.move(move, true);
@@ -219,16 +216,10 @@ export default class Snake {
 			return;
 		}
 
-		this.c.fillStyle = '#aaa';
 		this.c.strokeStyle = '#ccc';
-		this.c.font = "16px sans-serif";
 		for (i = 1; i < this.grid.w; i++) {
 			this.c.moveTo(this.radius * 2 * i, 0);
 			this.c.lineTo(this.radius * 2 * i, this.height);
-			this.c.fillText(
-				i.toString(),
-				this.radius * 2 * i,
-				this.radius * 2);
 		}
 		for (i = 1; i < this.grid.h; i++) {
 			this.c.moveTo(0, this.radius * 2 * i);
@@ -255,20 +246,20 @@ export default class Snake {
 			if (entering) {
 				switch (this.snake[i].from) {
 				case UP:
-					offsetY = this.radius * percentage * -1 + this.radius;
-					break;
-				case DOWN:
 					offsetY = this.radius * percentage - this.radius;
 					break;
+				case DOWN:
+					offsetY = this.radius * percentage * -1 + this.radius;
+					break;
 				case LEFT:
-					offsetX = this.radius * percentage * -1 + this.radius;
+					offsetX = this.radius * percentage - this.radius;
 					break;
 				case RIGHT:
-					offsetX = this.radius * percentage - this.radius;
+					offsetX = this.radius * percentage * -1 + this.radius;
 					break;
 				}
 			} else {
-				switch (this.snake[i].from) {
+				switch (this.snake[i].to || this.direction) {
 				case UP:
 					offsetY = this.radius * percentage * -1 + this.radius;
 					break;

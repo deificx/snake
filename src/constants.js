@@ -9,6 +9,6 @@ export const IDLE = 'IDLE';
 export const STARTED = 'STARTED';
 export const ENDED = 'ENDED';
 
-export const COOLDOWN = 1000;
-export const SCORE_CAP = 180;
+export const COOLDOWN = 250;
+export const SCORE_CAP = 150;
 export const SCORE_INCREASE = 10;
