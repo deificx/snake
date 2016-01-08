@@ -8,31 +8,42 @@ import {
 } from './constants';
 
 import EventEmitter from 'eventemitter3';
+const events = new EventEmitter();
 
-var events = new EventEmitter();
-
-import keypress from '../lib/keypress';
-
+import keypress from '../lib/keypress'; // eslint-disable-line
 const listener = new keypress.Listener();
 
-listener.simple_combo('up', () => {
-	events.emit('move', UP);
-});
+listener.register_many([
+	{
+		keys: 'up',
+		'on_keydown': () => { events.emit('move', UP); },
+		'prevent_repeat': true,
+	},
+	{
+		keys: 'right',
+		'on_keydown': () => { events.emit('move', RIGHT); },
+		'prevent_repeat': true,
+	},
+	{
+		keys: 'down',
+		'on_keydown': () => { events.emit('move', DOWN); },
+		'prevent_repeat': true,
+	},
+	{
+		keys: 'left',
+		'on_keydown': () => { events.emit('move', LEFT); },
+		'prevent_repeat': true,
+	},
+	{
+		keys: 'enter',
+		'on_keydown': () => { events.emit('new_game'); },
+		'prevent_repeat': true,
+	},
+	{
+		keys: 'space',
+		'on_keydown': () => { events.emit('new_game'); },
+		'prevent_repeat': true,
+	},
+]);
 
-listener.simple_combo('right', () => {
-	events.emit('move', RIGHT);
-});
-
-listener.simple_combo('down', () => {
-	events.emit('move', DOWN);
-});
-
-listener.simple_combo('left', () => {
-	events.emit('move', LEFT);
-});
-
-listener.simple_combo('enter', () => {
-	events.emit('new_game');
-});
-
-module.exports = events;
+export default events;

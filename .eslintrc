@@ -5,7 +5,8 @@
   	"node": true
   },
   "plugins": [
-    "babel"
+    "babel",
+    "import"
   ],
   "rules": {
   	/* http://eslint.org/docs/rules/#possible-errors */
@@ -137,6 +138,12 @@
     "sort-vars": 1,
     "space-after-keywords": 1,
     "space-before-blocks": 1,
+
+    "import/no-unresolved": [2, {"commonjs": true, "amd": false}],
+    "import/named": 2,
+    "import/namespace": 2,
+    "import/default": 2,
+    "import/export": 2,
 
     /* babel plugin https://github.com/babel/eslint-plugin-babel#rules */
     "babel/generator-star-spacing": 1,

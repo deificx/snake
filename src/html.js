@@ -14,4 +14,4 @@ if (!canvas) {
 canvas.width = document.body.offsetWidth;
 canvas.height = document.body.offsetHeight;
 
-module.exports = canvas;
+export default canvas;
