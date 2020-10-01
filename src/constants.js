@@ -12,3 +12,6 @@ export const ENDED = "ENDED";
 export const COOLDOWN = 250;
 export const SCORE_CAP = 150;
 export const SCORE_INCREASE = 10;
+
+export const EMIT_MOVE = "EMIT_MOVE";
+export const EMIT_NEW_GAME = "EMIT_NEW_GAME";

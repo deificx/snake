@@ -1,6 +1,6 @@
 "use strict";
 
-import { IDLE, ENDED } from "./constants";
+import { IDLE, ENDED, EMIT_MOVE, EMIT_NEW_GAME } from "./constants";
 
 import canvas from "./html.js";
 import Snake from "./snake";
@@ -78,10 +78,10 @@ requestAnimationFrame(render);
 
 import controls from "./controls";
 
-controls.on("move", ({ direction }) => {
+controls.on(EMIT_MOVE, ({ direction }) => {
   s.setDir(direction);
 });
-controls.on("new_game", () => {
+controls.on(EMIT_NEW_GAME, () => {
   s.newGame();
   requestAnimationFrame(render);
 });
