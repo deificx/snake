@@ -1,39 +1,26 @@
-var path = require('path');
-var webpack = require('webpack');
+const { resolve } = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-	entry: path.join(__dirname, 'src', 'game.js'),
-	output: {
-		filename: 'snake.js',
-		path: path.join(__dirname, 'dist'),
-		publicPath: '',
-	},
-	module: {
-		preLoaders: [
-			{
-				test: /\.js$/,
-				include: path.join(__dirname, 'src'),
-				loader: 'eslint?{fix:true}'
-			}
-		],
-		loaders: [
-			{
-				test: /\.js$/,
-				include: path.join(__dirname, 'src'),
-				loader: 'babel',
-				query: {
-					plugins: ['transform-runtime'],
-					presets: ['es2015']
-				}
-			}
-		]
-	},
-	plugins: [
-		new webpack.optimize.OccurenceOrderPlugin(true),
-		new webpack.optimize.UglifyJsPlugin({
-			output: {
-				comments: false
-			}
-		}),
-	]
-}
+  devtool: "source-map",
+  entry: resolve(__dirname, "src", "game.js"),
+  output: {
+    filename: "snake.js",
+    path: resolve(__dirname, "dist"),
+    publicPath: "",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        loader: "eslint-loader?{fix:true}",
+        enforce: "pre",
+      },
+      {
+        test: /\.js$/,
+        loader: "babel-loader",
+      },
+    ],
+  },
+  plugins: [new HtmlWebpackPlugin({ title: "Snake" })],
+};
