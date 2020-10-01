@@ -22,5 +22,10 @@ module.exports = {
       },
     ],
   },
-  plugins: [new HtmlWebpackPlugin({ title: "Snake" })],
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: resolve(__dirname, "index.html"),
+      title: "Snake",
+    }),
+  ],
 };

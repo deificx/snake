@@ -24,7 +24,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
-    "animation-frame": "^0.3.0",
     "babel-core": "^6.3.26",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
