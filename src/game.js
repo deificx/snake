@@ -78,8 +78,8 @@ requestAnimationFrame(render);
 
 import controls from "./controls";
 
-controls.on("move", (dir) => {
-  s.setDir(dir);
+controls.on("move", ({ direction }) => {
+  s.setDir(direction);
 });
 controls.on("new_game", () => {
   s.newGame();

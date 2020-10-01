@@ -2,22 +2,37 @@
 
 import { UP, RIGHT, DOWN, LEFT } from "./constants";
 
-import EventEmitter from "eventemitter3";
+class EventEmitter {
+  constructor() {
+    this.element = window.document.createElement("a");
+  }
+
+  emit(name, detail = {}) {
+    this.element.dispatchEvent(new window.CustomEvent(name, { detail }));
+  }
+
+  on(name, handler) {
+    this.element.addEventListener(name, (event) => {
+      handler(event.detail);
+    });
+  }
+}
+
 const events = new EventEmitter();
 
 import Mousetrap from "mousetrap";
 
 Mousetrap.bind("up", () => {
-  events.emit("move", UP);
+  events.emit("move", { direction: UP });
 });
 Mousetrap.bind("right", () => {
-  events.emit("move", RIGHT);
+  events.emit("move", { direction: RIGHT });
 });
 Mousetrap.bind("down", () => {
-  events.emit("move", DOWN);
+  events.emit("move", { direction: DOWN });
 });
 Mousetrap.bind("left", () => {
-  events.emit("move", LEFT);
+  events.emit("move", { direction: LEFT });
 });
 Mousetrap.bind("enter", () => {
   events.emit("new_game");
