@@ -15,8 +15,8 @@
   "author": "Even Alander",
   "main": "src/snake.js",
   "scripts": {
-    "dev": "webpack-dev-server -d src/game.js --content-base src --hot",
-    "start": "webpack -p",
+    "build": "webpack -p",
+    "start": "webpack-dev-server -d src/game.js --content-base src --hot",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

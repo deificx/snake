@@ -6,7 +6,7 @@ module.exports = {
   entry: resolve(__dirname, "src", "game.js"),
   output: {
     filename: "snake.js",
-    path: resolve(__dirname, "dist"),
+    path: resolve(__dirname),
     publicPath: "",
   },
   module: {
@@ -24,7 +24,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: resolve(__dirname, "index.html"),
+      template: resolve(__dirname, "src", "index.html"),
       title: "Snake",
     }),
   ],
