@@ -19,7 +19,9 @@
     "start": "webpack -p",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "mousetrap": "^1.6.5"
+  },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "animation-frame": "^0.3.0",
