@@ -4,13 +4,12 @@ import { IDLE, ENDED, EMIT_MOVE, EMIT_NEW_GAME } from "./constants";
 
 import canvas from "./html.js";
 import Snake from "./snake";
+import textRenderer from "./textRenderer";
 
 const gridWidth = 30;
-const context = canvas.getContext("2d");
-const s = new Snake(context, canvas.width, canvas.height, gridWidth);
-const textMarginLeft = 20;
-const textHeight = 50;
-const textWidth = canvas.width - textMarginLeft * 2;
+const s = new Snake(canvas, gridWidth);
+
+const renderText = textRenderer(canvas);
 
 let highScore = 0;
 let time;
@@ -20,55 +19,36 @@ const render = () => {
   const dt = now - (time || now);
   time = now;
 
-  context.fillStyle = "#eee";
-  context.fillRect(0, 0, canvas.width, canvas.height);
-
   s.update(dt);
   s.render();
 
-  context.fillStyle = "#999";
-  context.font = "32px sans-serif";
   switch (s.getState()) {
     case IDLE:
-      context.fillText(
-        "Press return/enter to start a new game",
-        textMarginLeft,
-        textHeight,
-        textWidth
-      );
+      renderText({
+        text: "Press return/enter to start a new game",
+      });
       break;
 
     case ENDED:
-      context.fillText("GAME OVER!", textMarginLeft, textHeight, textWidth);
-      context.fillText(
-        "Press return/enter to start a new game",
-        textMarginLeft,
-        textHeight * 2,
-        textWidth
-      );
+      renderText({ text: "GAME OVER!" });
+      renderText({ text: "Press return/enter to start a new game", line: 2 });
       if (s.getScore() > 0 && s.getScore() >= highScore) {
-        highScore = s.getScore();
-        context.fillText(
-          "Congratulations, new high score: " + highScore,
-          textMarginLeft,
-          textHeight * 3, // eslint-disable-line
-          textWidth
-        );
+        renderText({
+          text: `Congratulations, new high score: ${s.getScore()}`,
+          line: 3,
+        });
       } else {
-        context.fillText(
-          "You scored " +
-            s.getScore() +
-            " points. Your high score is " +
-            highScore,
-          textMarginLeft,
-          textHeight * 3, // eslint-disable-line
-          textWidth
-        );
+        renderText({
+          text: `You scored ${s.getScore()} points. Your high score is ${highScore}`,
+          line: 3,
+        });
       }
       break;
 
     default:
-      context.fillText(s.getScore(), textMarginLeft, textHeight, textWidth);
+      renderText({
+        text: s.getScore(),
+      });
       requestAnimationFrame(render);
       break;
   }
